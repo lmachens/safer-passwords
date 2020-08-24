@@ -7,7 +7,7 @@ const CHOICE_SET = "Set a password";
 const questionsStart = [
   {
     type: "password",
-    name: "password",
+    name: "masterPassword",
     message: "What's your master password?",
   },
   {
@@ -39,27 +39,25 @@ const questionsSet = [
   },
 ];
 
-inquirer.prompt(questionsStart).then(async (answersStart) => {
-  if (answersStart.password === "123") {
+inquirer.prompt(questionsStart).then(async ({ masterPassword, action }) => {
+  if (masterPassword === "123") {
     console.log("Master Password is correct!");
-    if (answersStart.action === CHOICE_GET) {
+    if (action === CHOICE_GET) {
       console.log("Now Get a password");
-      inquirer.prompt(questionsGet).then(async (answersGet) => {
+      inquirer.prompt(questionsGet).then(async ({ key }) => {
         try {
           const passwordsJSON = await fs.readFile("./passwords.json", "utf-8");
           const passwords = JSON.parse(passwordsJSON);
-          console.log(
-            `Your ${answersGet.key} password is ${passwords[answersGet.key]}`
-          );
+          console.log(`Your ${key} password is ${passwords[key]}`);
         } catch (error) {
           console.error("Something went wrong 😑");
           // What to do now?
         }
       });
-    } else if (answersStart.action === CHOICE_SET) {
+    } else if (action === CHOICE_SET) {
       console.log("Now Set a password");
-      inquirer.prompt(questionsSet).then(async (answersSet) => {
-        console.log(`New Password: ${answersSet.key} = ${answersSet.password}`);
+      inquirer.prompt(questionsSet).then(async ({ key, password }) => {
+        console.log(`New Password: ${key} = ${password}`);
       });
     }
   } else {
