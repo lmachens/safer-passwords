@@ -1,0 +1,24 @@
+{
+  "name": "safer-passwords",
+  "version": "1.0.0",
+  "description": "Password Manager Example",
+  "main": "cli.js",
+  "dependencies": {
+    "inquirer": "^7.3.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lmachens/safer-passwords.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lmachens/safer-passwords/issues"
+  },
+  "homepage": "https://github.com/lmachens/safer-passwords#readme"
+}
