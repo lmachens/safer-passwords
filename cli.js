@@ -5,7 +5,7 @@ const {
   CHOICE_GET,
   CHOICE_SET,
 } = require("./lib/questions");
-const { readPassword } = require("./lib/passwords");
+const { readPassword, writePassword } = require("./lib/passwords");
 
 async function main() {
   const { masterPassword, action } = await askStartQuestions();
@@ -25,7 +25,8 @@ async function main() {
     } else if (action === CHOICE_SET) {
       console.log("Now Set a password");
       const { key, password } = await askSetPasswordQuestions();
-      console.log(`New Password: ${key} = ${password}`);
+      await writePassword(key, password);
+      console.log(`New Password set`);
     }
   } else {
     console.log("Master Password is incorrect!");
