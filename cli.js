@@ -1,25 +1,36 @@
-const inquirer = require("inquirer");
+const {
+  askStartQuestions,
+  askGetPasswordQuestions,
+  askSetPasswordQuestions,
+  CHOICE_GET,
+  CHOICE_SET,
+} = require("./lib/questions");
+const { readPassword, writePassword } = require("./lib/passwords");
 
-const questions = [
-  {
-    type: "password",
-    name: "password",
-    message: "What's your master password?",
-  },
-  {
-    type: "input",
-    name: "key",
-    message: "Which password do you need?",
-  },
-];
+async function main() {
+  const { masterPassword, action } = await askStartQuestions();
 
-inquirer.prompt(questions).then((answers) => {
-  console.log(`Your password is ${answers.password}!`);
-  console.log(`You like to know the password of ${answers.key}!`);
-
-  if (answers.password === "123") {
-    console.log("Password is correct!");
+  if (masterPassword === "123") {
+    console.log("Master Password is correct!");
+    if (action === CHOICE_GET) {
+      console.log("Now Get a password");
+      const { key } = await askGetPasswordQuestions();
+      try {
+        const password = await readPassword(key);
+        console.log(`Your ${key} password is ${password}`);
+      } catch (error) {
+        console.error("Something went wrong 😑");
+        // What to do now?
+      }
+    } else if (action === CHOICE_SET) {
+      console.log("Now Set a password");
+      const { key, password } = await askSetPasswordQuestions();
+      await writePassword(key, password);
+      console.log(`New Password set`);
+    }
   } else {
-    console.log("Password is incorrect!");
+    console.log("Master Password is incorrect!");
   }
-});
+}
+
+main();
