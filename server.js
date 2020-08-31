@@ -2,9 +2,8 @@ require("dotenv").config();
 
 const express = require("express");
 const { MongoClient } = require("mongodb");
-const { readPassword, writePassword } = require("./lib/passwords");
-const { decrypt, encrypt } = require("./lib/crypto");
 const bodyParser = require("body-parser");
+const createPasswordsRouter = require("./routes/passwords");
 
 const client = new MongoClient(process.env.MONGO_URI, {
   useUnifiedTopology: true,
@@ -26,34 +25,7 @@ async function main() {
     next();
   });
 
-  app.get("/api/passwords/:name", async (request, response) => {
-    try {
-      const { name } = request.params;
-      const encryptedPassword = await readPassword(name, database);
-      if (!encryptedPassword) {
-        response.status(404).send(`Password ${name} not found`);
-        return;
-      }
-      const password = decrypt(encryptedPassword, masterPassword);
-
-      response.send(password);
-    } catch (error) {
-      console.error(error);
-      response.status(500).send(error.message);
-    }
-  });
-
-  app.post("/api/passwords", async (request, response) => {
-    try {
-      const { name, value } = request.body;
-      const encryptedPassword = encrypt(value, masterPassword);
-      await writePassword(name, encryptedPassword, database);
-      response.status(201).send(`Password ${name} created`);
-    } catch (error) {
-      console.error(error);
-      response.status(500).send(error.message);
-    }
-  });
+  app.use("/api/passwords", createPasswordsRouter(database, masterPassword));
 
   app.get("/", (request, response) => {
     response.sendFile(__dirname + "/index.html");
