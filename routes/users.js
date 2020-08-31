@@ -1,4 +1,5 @@
 const express = require("express");
+const jwt = require("jsonwebtoken");
 
 function createUsersRouter(database) {
   const router = express.Router();
@@ -16,8 +17,12 @@ function createUsersRouter(database) {
         response.status(401).send("Wrong email or password");
         return;
       }
+      const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+        expiresIn: "360s",
+      });
 
-      console.log(user);
+      response.setHeader("Set-Cookie", `authToken=${token};path=/;Max-Age=360`);
+
       response.send("Logged in");
     } catch (error) {
       console.error(error);
