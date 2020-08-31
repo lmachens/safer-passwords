@@ -5,7 +5,9 @@ const { MongoClient } = require("mongodb");
 const { readPassword } = require("./lib/passwords");
 const { decrypt } = require("./lib/crypto");
 
-const client = new MongoClient(process.env.MONGO_URI);
+const client = new MongoClient(process.env.MONGO_URI, {
+  useUnifiedTopology: true,
+});
 
 const app = express();
 
