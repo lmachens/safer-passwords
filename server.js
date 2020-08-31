@@ -21,6 +21,10 @@ async function main() {
   app.get("/api/passwords/:name", async (request, response) => {
     const { name } = request.params;
     const encryptedPassword = await readPassword(name, database);
+    if (!encryptedPassword) {
+      response.status(404).send(`Password ${name} not found`);
+      return;
+    }
     const password = decrypt(encryptedPassword, masterPassword);
 
     response.send(password);
