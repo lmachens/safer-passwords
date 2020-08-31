@@ -2,8 +2,9 @@ require("dotenv").config();
 
 const express = require("express");
 const { MongoClient } = require("mongodb");
-const { readPassword } = require("./lib/passwords");
-const { decrypt } = require("./lib/crypto");
+const { readPassword, writePassword } = require("./lib/passwords");
+const { decrypt, encrypt } = require("./lib/crypto");
+const bodyParser = require("body-parser");
 
 const client = new MongoClient(process.env.MONGO_URI, {
   useUnifiedTopology: true,
@@ -17,6 +18,8 @@ async function main() {
   await client.connect();
   const database = client.db(process.env.MONGO_DB_NAME);
   const masterPassword = process.env.MASTER_PASSWORD;
+
+  app.use(bodyParser.json());
 
   app.get("/api/passwords/:name", async (request, response) => {
     try {
@@ -35,8 +38,16 @@ async function main() {
     }
   });
 
-  app.post("/api/passwords", (request, response) => {
-    response.send("123");
+  app.post("/api/passwords", async (request, response) => {
+    try {
+      const { name, value } = request.body;
+      const encryptedPassword = encrypt(value, masterPassword);
+      await writePassword(name, encryptedPassword, database);
+      response.status(201).send(`Password ${name} created`);
+    } catch (error) {
+      console.error(error);
+      response.status(500).send(error.message);
+    }
   });
 
   app.get("/", (request, response) => {
