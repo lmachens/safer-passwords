@@ -18,9 +18,9 @@ async function main() {
   const database = client.db(process.env.MONGO_DB_NAME);
   const masterPassword = process.env.MASTER_PASSWORD;
 
-  app.get("/api/passwords/wifi", async (request, response) => {
-    const key = "wifi";
-    const encryptedPassword = await readPassword(key, database);
+  app.get("/api/passwords/:name", async (request, response) => {
+    const { name } = request.params;
+    const encryptedPassword = await readPassword(name, database);
     const password = decrypt(encryptedPassword, masterPassword);
 
     response.send(password);
