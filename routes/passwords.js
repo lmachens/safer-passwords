@@ -77,7 +77,7 @@ function createPasswordsRouter(database, masterPassword) {
         database
       );
 
-      response.status(200).send("Password updated");
+      response.status(200).send("Updated");
     } catch (error) {
       console.error(error);
       response.status(500).send(error.message);
