@@ -21,18 +21,20 @@ async function login() {
   }
 }
 
-async function fetchPassword(name) {
-  try {
-    const response = await fetch(`/api/passwords/${name}`);
-    const result = await response.text();
-    alert(result);
-  } catch (error) {
-    alert(error.message);
-  }
-}
-
 function App() {
   const [passwordName, setPasswordName] = useState("");
+  const [passwordValue, setPasswordValue] = useState(null);
+
+  async function fetchPassword(name) {
+    try {
+      const response = await fetch(`/api/passwords/${name}`);
+      const result = await response.text();
+      setPasswordValue(result);
+    } catch (error) {
+      setPasswordValue(error.message);
+    }
+  }
+
   return (
     <div className="App">
       <button onClick={login}>Login</button>
@@ -44,6 +46,7 @@ function App() {
         />
       </label>
       <button onClick={() => fetchPassword(passwordName)}>Get Password</button>
+      <div>Password: {passwordValue}</div>
     </div>
   );
 }
