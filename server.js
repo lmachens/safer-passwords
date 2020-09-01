@@ -19,6 +19,8 @@ const port = 3000;
 async function main() {
   await client.connect();
   const database = client.db(process.env.MONGO_DB_NAME);
+  database.collection("passwords").createIndex({ name: 1 }, { unique: true });
+
   const masterPassword = process.env.MASTER_PASSWORD;
 
   app.use(bodyParser.json());
