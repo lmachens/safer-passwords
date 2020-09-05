@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
+import useStorageState from "./hooks/useStorageState";
 
 async function login() {
   try {
@@ -22,7 +23,11 @@ async function login() {
 }
 
 function App() {
-  const [passwordName, setPasswordName] = useState("");
+  const [passwordName, setPasswordName] = useStorageState(
+    "passwordName",
+    "",
+    localStorage
+  );
   const [passwordValue, setPasswordValue] = useState(null);
 
   async function fetchPassword(name) {
@@ -35,15 +40,17 @@ function App() {
     }
   }
 
+  function handlePasswordNameChange(event) {
+    const newPasswordName = event.target.value;
+    setPasswordName(newPasswordName);
+  }
+
   return (
     <div className="App">
       <button onClick={login}>Login</button>
       <label>
         Password-Name{" "}
-        <input
-          value={passwordName}
-          onChange={(event) => setPasswordName(event.target.value)}
-        />
+        <input value={passwordName} onChange={handlePasswordNameChange} />
       </label>
       <button onClick={() => fetchPassword(passwordName)}>Get Password</button>
       <div>Password: {passwordValue}</div>
